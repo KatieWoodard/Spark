@@ -1,4 +1,8 @@
+#The line below imports Spark so that we can use its functionality
 from pyspark import SparkContext
+"""
+
+"""
 
 class TweetCollector:
     """
@@ -13,4 +17,3 @@ class TweetCollector:
         self.sc = SparkContext('local','pyspark')
 
     def twitterConnect():
-        
