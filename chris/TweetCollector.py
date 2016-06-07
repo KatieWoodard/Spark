@@ -1,4 +1,3 @@
-from pyspark import SparkContext
 import ConfigParser #so we can get user specific api keys etc.
 
 #import a few Tweepy modules to get tweets
@@ -6,27 +5,56 @@ import tweepy
 from tweepy import OAuthHandler
 from tweepy import Stream
 from tweepy.streaming import StreamListener as listener
+import sys
 
 class TweetCollector:
     """
     A class for collecting tweets. We use pyspark to create an RDD of tweets and look at some attributes of the data, such as the most used hashtag or the most verbose tweeters from the tweets collected.
     """
+    CONST_TWITTERAPIKEYS = 'Twitter API Keys'
+
     def __init__(self):
         """
-        Initialize a tweet collector. We create a SparkContext
-        to help out with tweet collection and analysis.
+        Initialize a tweet collector. Basically just connects to the Twitter API via Tweepy and opens a stream.
         """
-        self.sc = SparkContext('local','pyspark')
         # parse twitter keys
-        # TODO This is too specific, could it be more general?
-        # TODO Should config parsing be moved to another module altogether?
-        cp = ConfigParser.ConfigParser()
-        cp.read("config/keys.ini") #possible to un-hardcode this?
-        self.consumer_key = cp.get('Twitter API Keys','consumer_key')
-        self.consumer_secret = cp.get('Twitter API Keys','consumer_secret')
-        self.access_token = cp.get('Twitter API Keys','access_token')
-        self.access_token_secret = cp.get('Twitter API Keys','access_token_secret')
+        settings = self.getSettings(sys.argv)
+        self.consumer_key = settings[0]
+        self.consumer_secret = settings[1]
+        self.access_token = settings[2]
+        self.access_token_secret = settings[3]
         self.twitterConnect() #after getting keys, connect to twitter
+
+    def getSettings(self, args):
+        """
+        Parse the user's Twitter API keys.
+
+        @param args an array containing only the name of the file to be parsed.
+
+        @return the Twitter API keys extracted from the file.
+        """
+        print 'args: %s' %args
+        if len(args) != 2:
+            self.usage() #tell user how not to be a dummy
+            fname = self.getFileName()
+        else: #User entered a filename (or something)
+            fname = args[1]
+        #now that we have a file, try to parse it and get the keys.
+        cp = ConfigParser.ConfigParser()
+        cp.read(fname)
+        settings = []
+        try:
+            for k,v in cp.items(self.CONST_TWITTERAPIKEYS):
+                settings.append(v)
+        except ConfigParser.NoSectionError:
+            print "Your config file isn't formatted correctly :(. Try again, following this format:"
+            self.usage()
+            sys.exit(0) #completely end program here. User should try again.
+        return settings
+
+    def getFileName(self):
+        print('enter the name of your config file:')
+        return raw_input()
 
     def twitterConnect(self):
         """
@@ -55,6 +83,16 @@ class TweetCollector:
         tweetStream = Stream(auth,TweetStream())
 
 
+    def usage(self):
+        print '''Hey! Enter the name of a file containing your Twitter API keys to get started. The file must be formatted like an INI file as follows:
+
+        [Twitter API KEYS]
+        consumer_key=#########
+        consumer_secret=###############
+        access_token=#############
+        access_token_secret=##############\n\nThe names of the variables are important! Anyways, have fun collecting tweets!
+        '''
+        return
 
 class TweetStream(listener):
 
