@@ -4,6 +4,8 @@ import tweepy
 from tweepy import OAuthHandler
 import simplejson as json
 import ConfigParser
+from tweepy import Stream
+from tweepy.streaming import StreamListener as listener
 
 cp = ConfigParser.ConfigParser()
 cp.read('config/twitterkeys')
@@ -21,17 +23,30 @@ auth.set_access_token(access_token, access_secret)
 api = tweepy.API(auth)
 
 # turn into streaming
+"""
+#This prints each of the top 10 tweets on my home timeline and all of their metadata
 with open ("tweetsCollect.json", 'a') as tweets:
     for status in tweepy.Cursor(api.home_timeline).items(10):
-        #status.decode('utf-8')
-        #txtdecode = txt.encode('utf-8')
-    #    print(txtdecode)
-    #    tweets.write(txtdecode)
-    #    json.dump(status, tweets)
-    #    tweets.write(status)
-        print type(status.parse())
-        #print status
-'''
+        print(json.dumps(status))
+"""
+#MyListener will keep appending the tweetsCollect file with tweets and their metadata as they come through
+#
+class MyListener(listener):
+    def on_data(self,data):
+        try:
+            with open('tweetsCollect.json','a') as tweets:
+                tweets.write(data)
+                return True
+        except BaseException as e:
+            print "Error on_data: %s" % str(e)
+        return True
+    def on_error(self,status):
+        print(status)
+        return True
+
+twitter_stream = Stream(auth, MyListener())
+twitter_stream.filter(track=["#python"])
+"""
 import json
 with open('data.txt', 'w') as outfile:
     json.dump(data, outfile)
@@ -48,11 +63,6 @@ with open("tweetsCollect.json","w+") as tweets:
 #        print "error processing tweet %s" %str(ex)
     #print type(status)
     #data.append(str(status))
-'''
-
-"""with open("tweetsCollect.json","a") as tweets:
-      tweets.write(data)
-
-"""
 #class tweet_collector(self):
  # def __init__(self):
+"""
