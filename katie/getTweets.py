@@ -3,7 +3,6 @@
 import tweepy
 from tweepy import OAuthHandler
 import simplejson as json
-import codecs
 import ConfigParser
 
 cp = ConfigParser.ConfigParser()
@@ -20,14 +19,18 @@ auth = OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_secret)
 
 api = tweepy.API(auth)
+
+# turn into streaming
 with open ("tweetsCollect.json", 'a') as tweets:
     for status in tweepy.Cursor(api.home_timeline).items(10):
         #status.decode('utf-8')
-        txt = status
         #txtdecode = txt.encode('utf-8')
     #    print(txtdecode)
     #    tweets.write(txtdecode)
-        json.dump(txt, tweets)
+    #    json.dump(status, tweets)
+    #    tweets.write(status)
+        print type(status.parse())
+        #print status
 '''
 import json
 with open('data.txt', 'w') as outfile:
