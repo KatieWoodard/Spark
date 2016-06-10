@@ -2,7 +2,6 @@
 
 import tweepy
 from tweepy import OAuthHandler
-import simplejson as json
 import ConfigParser
 from tweepy import Stream
 from tweepy.streaming import StreamListener as listener
@@ -15,14 +14,10 @@ consumer_secret = cp.get('twitter api keys', 'consumer_secret')
 access_token = cp.get('twitter api keys', 'access_token')
 access_secret = cp.get('twitter api keys', 'access_secret')
 
-
-
 auth = OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_secret)
-
 api = tweepy.API(auth)
 
-# turn into streaming
 """
 #This prints each of the top 10 tweets on my home timeline and all of their metadata
 with open ("tweetsCollect.json", 'a') as tweets:
@@ -45,24 +40,4 @@ class MyListener(listener):
         return True
 
 twitter_stream = Stream(auth, MyListener())
-twitter_stream.filter(track=["#python"])
-"""
-import json
-with open('data.txt', 'w') as outfile:
-    json.dump(data, outfile)
-
-with open("tweetsCollect.json","w+") as tweets:
-    #try:
-        for status in tweepy.Cursor(api.home_timeline).items(10):
-            print type(status.text)
-            x = json.dump(status.text, tweets)
-            print x
-            #tweets.write(x)
-            #print "tweet saved"
-#    except BaseException as ex:
-#        print "error processing tweet %s" %str(ex)
-    #print type(status)
-    #data.append(str(status))
-#class tweet_collector(self):
- # def __init__(self):
-"""
+twitter_stream.filter(track=["#python"], languages = ["en"])
