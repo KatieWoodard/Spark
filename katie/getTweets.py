@@ -40,4 +40,4 @@ class MyListener(listener):
         return True
 
 twitter_stream = Stream(auth, MyListener())
-twitter_stream.filter(track=["#python"], languages = ["en"])
+twitter_stream.filter(track=['#Euros2016']) ## can add other filters like language: , languages = ["en"])
