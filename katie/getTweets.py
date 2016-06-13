@@ -29,7 +29,7 @@ with open ("tweetsCollect.json", 'a') as tweets:
 class MyListener(listener):
     def on_data(self,data):
         try:
-            with open('tweetsCollect.json','a') as tweets:
+            with open('Euro2016Monday613.json','a') as tweets:
                 tweets.write(data)
                 return True
         except BaseException as e:
@@ -40,4 +40,4 @@ class MyListener(listener):
         return True
 
 twitter_stream = Stream(auth, MyListener())
-twitter_stream.filter(track=['#Euros2016']) ## can add other filters like language: , languages = ["en"])
+twitter_stream.filter(track=['#Euro2016']) ## can add other filters like language: , languages = ["en"])

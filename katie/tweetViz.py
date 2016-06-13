@@ -4,20 +4,22 @@ import matplotlib.pyplot as plt
 
 
 tweets_data = []
-tweets_file = open('tweetsCollect.json','r')
+tweets_file = open('Euro2016tweetsCollect.json','r')
 for line in tweets_file:
     try:
         tweet = json.loads(line)
-        tweets_data.append(tweet)
+        #need to check that the line is actually a tweet, twitter also sends limit info as lines through getTweets
+        if 'created_at' in tweet:
+            tweets_data.append(tweet)
     except:
         continue
 
 print len(tweets_data)
 
 tweets = pd.DataFrame()
-tweets['text'] = map(lambda tweet: tweet['text'], tweets_data)
-tweets['lang'] = map(lambda tweet: tweet['lang'], tweets_data)
-tweets['country'] = map(lambda tweet: tweet['place']['country'] if tweet['place'] != None else None, tweets_data)
+tweets["text"] = map(lambda tweet: tweet["text"], tweets_data)
+tweets["lang"] = map(lambda tweet: tweet["lang"], tweets_data)
+tweets["country"] = map(lambda tweet: tweet["place"]["country"] if tweet["place"] != None else None, tweets_data)
 
 tweets_by_lang = tweets['lang'].value_counts()
 #print tweets_by_lang
