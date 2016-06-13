@@ -102,9 +102,8 @@ class TweetStream(listener):
         whenever a new one comes in.
         """
         try: #open the file in 'a'ppend mode and try to save the tweet in it
-            with open('tweets.json','a') as tf:
+            with open('tweets.txt','a') as tf:
                 tf.write(data)
-                print 'wrote data: %s\n' % str(data)
                 return True
         except BaseException as e:
                 print("error processing tweet: %s" % str(e))
