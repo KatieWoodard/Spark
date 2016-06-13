@@ -30,8 +30,9 @@ class MyListener(listener):
     def on_data(self,data):
         try:
             with open('Euro2016Monday613.json','a') as tweets:
-                tweets.write(data)
-                return True
+                if 'created_at' in data:
+                    tweets.write(data)
+                    return True
         except BaseException as e:
             print "Error on_data: %s" % str(e)
         return True
