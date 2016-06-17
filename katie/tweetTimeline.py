@@ -20,6 +20,8 @@ auth = OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_secret)
 api = tweepy.API(auth)
 
+
+
 #writes each tweet object from a user's timeline to a json file
 with open ("HitachiTimeline.json", 'a') as tweets:
     for status in tweepy.Cursor(api.user_timeline, id = "HIT_Consulting").items():
