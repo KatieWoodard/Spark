@@ -7,20 +7,34 @@ import re
 import json
 
 all_data = []
-with open('HitachiTimeline.json', 'r') as f:
+with open('TMobile.json', 'r') as f:
     for line in f:
         tweet = json.loads(line) # load it as Python dict
         only_text = json.dumps(tweet['text'])
         all_data.append(only_text)
 
-print all_data
+#print all_data
 
 data = ''.join(all_data)
-
+#print data.split()
 wordcloud = WordCloud().generate(data)
 plt.imshow(wordcloud)
 plt.axis("off")
-plt.savefig('test1.png')
+plt.savefig('TmobileWordCloud.png')
+
+query = data
+stopwords = ['what','who','is','a','at','is','the', 'amp', 'https', 'rt', 'u2026', 'ud83d', '@tmobile', '@johnlegere']
+querywords = query.split()
+resultwords  = [word for word in querywords if word.lower() not in stopwords]
+print resultwords
+result = ' '.join(resultwords)
+print result
+#result = ' '.join(filter(lambda x: x.lower() not in stopwords, data.split()))
+
+wordcloud2 = WordCloud().generate(result)
+plt.imshow(wordcloud2)
+plt.axis("off")
+plt.savefig('2testTmobileWordCloudTryStopWords.png')
 
 
 #sc = SparkContext("local", "Pysparktest")
