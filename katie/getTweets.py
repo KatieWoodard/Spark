@@ -31,7 +31,7 @@ class MyListener(listener):
         try:
             with open('TMobile.json','a') as tweets:
                 if 'created_at' in data:
-                    tweets.write(data)
+                    tweets.write(data.encode('utf-8'))
                     return True
         except BaseException as e:
             print "Error on_data: %s" % str(e)
